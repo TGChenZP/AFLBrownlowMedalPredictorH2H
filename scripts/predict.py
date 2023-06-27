@@ -7,30 +7,18 @@ import sys
 
 
 
-with open(f'../models/final_models/model1.pickle', 'rb') as f:
-    model1 = pickle.load(f)
+with open(f'../models/final_models/model.pickle', 'rb') as f:
+    model = pickle.load(f)
 
-with open(f'../models/final_models/model2.pickle', 'rb') as f:
-    model2 = pickle.load(f)
-
-with open(f'../models/final_models/model3.pickle', 'rb') as f:
-    model3 = pickle.load(f)
-
-
-with open(f'../models/AFL_pipeline_N.pickle', 'rb') as f:
-    sanmin = pickle.load(f)
     
-model3_COLS = sanmin.final_features['3']
-model2_COLS = sanmin.final_features['2']
-model1_COLS = sanmin.final_features['1']
-
-model3_COLS = [x for x in model3_COLS if x not in ['3', '2', '1']]
-model2_COLS = [x for x in model2_COLS if x not in ['3', '2', '1']]
-model1_COLS = [x for x in model1_COLS if x not in ['3', '2', '1']]
+# TODO: add in columns
 
 
 
-manip_type = 'NormalisedData'
+manip_type = 'Head2Head'
+
+csv_list = os.listdir(f'../data/curated/{manip_type}')
+csv_list.sort()
 
 csv_list = os.listdir(f'../future data/curated/{manip_type}')
 csv_list.sort()
@@ -53,26 +41,35 @@ def predict_brownlow(csv_list):
             team2 = file.split()[5]
             game = team1 + ' v ' + team2
 
-            data = pd.read_csv(f'../future data/curated/{manip_type}/{file}')
-            print(file)
-            player = data['Player']
-            pred3 = model3.predict(data[model3_COLS])
-            pred2 = model2.predict(data[model2_COLS])
-            pred1 = model1.predict(data[model1_COLS])
-            pred = pd.DataFrame({'player': player, '3': pred3, '2': pred2, '1': pred1})
+            data = pd.read_csv(f'../data/curated/{manip_type}/{file}')
 
-            three_votes = list(pred.sort_values('3', ascending = False)['player'])[0]
+            player1 = data['Player1']
+            player2 = data['Player2']
+            pred = model.predict(data[model3_COLS])
+            pred = pd.DataFrame({'player1': player1, 'player2': player2, 'pred': pred})
 
-            two_votes = list(pred.sort_values('2', ascending = False)['player'])[0]
-            if two_votes == three_votes:
-                two_votes = list(pred.sort_values('2', ascending = False)['player'])[1]
+            # initialise tallies
+            pred_leaderboard = dd(int)
+            
 
-            one_vote = list(pred.sort_values('1', ascending = False)['player'])[0]
-            if one_vote in (three_votes, two_votes):
-                one_vote = list(pred.sort_values('2', ascending = False)['player'])[1]
-                
-                if one_vote in (three_votes, two_votes):
-                    one_vote = list(pred.sort_values('2', ascending = False)['player'])[2]
+            for row in pred.iterrows(): # then get predicted votes
+                if row[1]['Predicted Brownlow Votes'] > 0:
+                    pred_leaderboard[row[1]['player1']] += 1
+                    pred_leaderboard[row[1]['player2']] -= 1
+
+                elif row[1]['Predicted Brownlow Votes'] < 0:
+                    pred_leaderboard[row[1]['player1']] -= 1
+                    pred_leaderboard[row[1]['player2']] += 1
+            
+            # turn leaderboard into a useable list
+            pred_leaderboard = list(pred_leaderboard.items())
+            pred_leaderboard.sort(key = lambda x:x[1],  reverse= True)
+
+            three_votes = pred_leaderboard[0][0]
+            
+            two_votes = pred_leaderboard[1][0]
+
+            one_vote = pred_leaderboard[2][0]
             
             game_dict[3] = three_votes
             game_dict[2] = two_votes
