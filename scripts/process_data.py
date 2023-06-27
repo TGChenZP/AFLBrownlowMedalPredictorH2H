@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import sys
+import json
 
 choice = 'OriginalData'
 
@@ -146,3 +147,53 @@ for file in filelist:
     
     
     norm.to_csv(f'../future data/curated/NormalisedData/{file.strip("(O).csv")} (N).csv', index=False)
+
+
+
+
+
+
+with open('../future data/raw/AFLCA_votes.json', 'r') as f:
+    AFLCA_votes_dict = json.load(f)
+
+errors = 0
+
+if not os.path.exists(f'../future data/curated/AFLCAVotes'):
+    os.makedirs(f'../future data/curated/AFLCAVotes')
+
+for year in AFLCA_votes_dict:
+    for round in AFLCA_votes_dict[year]:
+        for game in AFLCA_votes_dict[year][round]:
+
+            teams_list = game.split(' ')
+            team1 = teams_list[0]
+            team2 = teams_list[1]
+            try:
+                data = pd.read_csv(f'../future data/curated/OriginalData_AddDerived/{year} Round {round} {team1} v {team2} (O).csv')
+            except:
+                data = pd.read_csv(f'../future data/curated/OriginalData_AddDerived/{year} Round {round} {team2} v {team1} (O).csv')
+                print('Teams reversed')
+                print(year, round, game)
+                print(votes_data)
+
+            votes_data = AFLCA_votes_dict[year][round][game]
+
+            AFLCA_votes = list()
+            for player in data['Player']:
+                if player.lower() in votes_data:
+                    AFLCA_votes.append(votes_data[player.lower()])
+                else:
+                    AFLCA_votes.append(0)
+
+            if sum(AFLCA_votes) != 30: # validation
+                print('Did not sum up to 30:', sum(AFLCA_votes))
+                print(year, round, game)
+                print(votes_data, '\n')
+
+                errors += 1
+
+            data['AFLCA_votes'] = AFLCA_votes
+
+            data.to_csv(f'../future data/curated/AFLCAVotes/{year} Round {round} {team1} v {team2} (O).csv', index = False)
+
+print(errors)
