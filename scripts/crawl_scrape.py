@@ -7,6 +7,7 @@ import random
 from urllib.parse import urljoin
 import os
 import sys
+import datetime
 
 
 def scrape(url):
@@ -442,3 +443,115 @@ for year in urllist:
             save(out, metadata, 'O')
         
         time.sleep(random.uniform(0.5, 1))
+
+
+
+TEAM_MAP = {
+    'Adelaide Crows': 'Adelaide',
+    'Brisbane Lions': 'Brisbane',
+    'Carlton': 'Carlton',
+    'Collingwood': 'Collingwood',
+    'Essendon': 'Essendon',
+    'Fremantle': 'Fremantle',
+    'Geelong Cats': 'Geelong',
+    'Gold Coast Suns': 'GoldCoast',
+    'GWS Giants': 'GWS',
+    'Hawthorn': 'Hawthorn',
+    'North Melbourne': 'NorthMelbourne',
+    'Melbourne': 'Melbourne',
+    'Port Adelaide': 'PortAdelaide',
+    'Richmond': 'Richmond',
+    'St Kilda': 'StKilda',
+    'Sydney Swans': 'Sydney',
+    'West Coast Eagles': 'WestCoast',
+    'Western Bulldogs': 'WesternBulldogs'
+}
+
+
+
+
+def get_teams_dict_list(soup):
+    
+    teams_dict_list = list()
+
+    mydivs = soup.findAll('div')
+    for div in mydivs: 
+        if (div["class"] == ['row', 'votes-by-match', 'py-3']):
+            team1_tmp = div.find_next('img')['alt']
+            team2_tmp = div.find_next('img').find_next('img')['alt']
+
+            team1 = TEAM_MAP[team1_tmp]
+            team2 = TEAM_MAP[team2_tmp]
+            
+            teams_dict_list.append(f'{team1} {team2}')
+
+    return teams_dict_list
+
+
+
+
+
+def get_votes_from_game(game_data):
+    """ Helper to get {player:vote} from games """
+    game_votes_dict = {}
+
+    for string in re.findall(r'<strong>.*\n.*\n.*\n.*<span', str(game_data)):
+
+        player = re.findall(r'\t[A-Za-z \']*[-]?[A-Za-z \']* <span', string)[0].strip('\t').strip('<span').strip(' ')
+        player = player.lower()
+        votes = re.findall(r'>[0-9]{1,2}', string)[0].strip('>')
+        
+        game_votes_dict[player] = int(votes)
+    
+    return game_votes_dict
+
+
+
+
+
+def get_game_vote_dict_list(soup):
+    game_vote_dict_list = list()
+    mydivs = soup.findAll('div')
+    for div in mydivs: 
+        if (div["class"] == ['row', 'mb-3']):
+            game_votes_dict = get_votes_from_game(div)
+            game_vote_dict_list.append(game_votes_dict)
+    
+    return game_vote_dict_list
+
+
+
+
+
+def get_year_all_votes(year):
+    year_all_votes = dict()
+
+    for round in range(1, 24):
+        if year == datetime.date.today().year: # update just for 2023 - site link changed
+            url = f'https://aflcoaches.com.au/awards/the-aflca-champion-player-of-the-year-award/leaderboard/{year}/{year+1}01{str(round).zfill(2)}'
+        else:
+            url = f'https://aflcoaches.com.au/awards/the-aflca-champion-player-of-the-year-award/leaderboard/{year}/{year}01{str(round).zfill(2)}'
+        page = requests.get(url)
+        soup = BeautifulSoup(page.text, 'html.parser')
+
+        teams_dict_list = get_teams_dict_list(soup)
+        game_vote_dict_list = get_game_vote_dict_list(soup)
+
+        round_dict = {teams_dict_list[i]:game_vote_dict_list[i] for i in range(len(teams_dict_list))}
+
+        year_all_votes[round] = round_dict
+
+        time.sleep(random.uniform(0.5, 1))
+
+
+    return year_all_votes
+
+
+
+
+all_votes = dict()
+for year in years in range(int(sys.argv[1]), int(sys.argv[1])+1):
+    all_votes[year] = get_year_all_votes(year)
+
+with open('../future data/raw/AFLCA_votes.json', 'w') as f:
+    json.dump(all_votes, f, indent=4)
