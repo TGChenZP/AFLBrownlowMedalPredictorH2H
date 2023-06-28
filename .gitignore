@@ -1,6 +1,5 @@
 *.pyc
-data/curated/OriginalData_AddDerived/.DS_Store
-.DS_Store
+*.DS_Store
 .idea/vcs.xml
 .idea/modules.xml
 .idea/misc.xml
@@ -10,5 +9,9 @@ data/curated/OriginalData_AddDerived/.DS_Store
 models/AFL_pipeline_RS.pickle
 models/AFL_pipeline_RS_components.pickle
 future data/
-data/
+data/raw/OriginalData
+data/curated/OriginalData_AddDerived/
+data/curated/AFLCAVotes/
+data/curated/Head2Head/
+data/curated/modelling/
 .vscode/extensions.json
