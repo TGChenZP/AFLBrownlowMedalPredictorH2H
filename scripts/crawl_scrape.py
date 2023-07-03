@@ -8,6 +8,7 @@ from urllib.parse import urljoin
 import os
 import sys
 import datetime
+import json
 
 
 def scrape(url):
