@@ -8,6 +8,7 @@ from urllib.parse import urljoin
 import os
 import sys
 import datetime
+import json
 
 
 def scrape(url):
@@ -550,7 +551,7 @@ def get_year_all_votes(year):
 
 
 all_votes = dict()
-for year in years in range(int(sys.argv[1]), int(sys.argv[1])+1):
+for year in range(int(sys.argv[1]), int(sys.argv[1])+1):
     all_votes[year] = get_year_all_votes(year)
 
 with open('../future data/raw/AFLCA_votes.json', 'w') as f:
