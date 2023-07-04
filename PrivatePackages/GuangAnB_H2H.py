@@ -1194,17 +1194,17 @@ class GuangAnB:
         val_pred = clf.predict(tmp_val_x)
         test_pred = clf.predict(tmp_test_x)
 
-        train_obs_df = copy.deepcopy(train_other_info)
-        val_obs_df = copy.deepcopy(val_other_info)
-        test_obs_df = copy.deepcopy(test_other_info)
+        train_obs_df = copy.deepcopy(self.train_other_info)
+        val_obs_df = copy.deepcopy(self.val_other_info)
+        test_obs_df = copy.deepcopy(self.test_other_info)
 
         train_obs_df['Brownlow Votes'] = list(self.train_y)
         val_obs_df['Brownlow Votes'] = list(self.val_y)
         test_obs_df['Brownlow Votes'] = list(self.test_y)
 
-        train_pred_df = copy.deepcopy(train_other_info)
-        val_pred_df = copy.deepcopy(val_other_info)
-        test_pred_df = copy.deepcopy(test_other_info)
+        train_pred_df = copy.deepcopy(self.train_other_info)
+        val_pred_df = copy.deepcopy(self.val_other_info)
+        test_pred_df = copy.deepcopy(self.test_other_info)
 
         train_pred_df['Predicted Brownlow Votes'] = list(train_pred)
         val_pred_df['Predicted Brownlow Votes'] = list(val_pred)
