@@ -682,15 +682,15 @@ class JiaoCheng:
         except:
             test_brownlow_score = 0
 
-        df_building_dict['Train Brownlow Metric'] = [np.round(train_brownlow_score, 6)]
-        df_building_dict['Val Brownlow Metric'] = [np.round(val_brownlow_score, 6)]
-        df_building_dict['Test Brownlow Metric'] = [np.round(test_brownlow_score, 6)]
-
         # get scores and time used
         time_used = end-start
 
         # build output dictionary and save result
         df_building_dict = params
+        
+        df_building_dict['Train Brownlow Metric'] = [np.round(train_brownlow_score, 6)]
+        df_building_dict['Val Brownlow Metric'] = [np.round(val_brownlow_score, 6)]
+        df_building_dict['Test Brownlow Metric'] = [np.round(test_brownlow_score, 6)]
 
         # get evaluation statistics
         df_building_dict, val_score, test_score = self._eval_combo(df_building_dict, train_pred, val_pred, test_pred)
