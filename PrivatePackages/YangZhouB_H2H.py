@@ -1068,8 +1068,8 @@ class YangZhouB:
         self._save_tuning_result()
 
         # update best score stats
-        if val_score > self.best_score: 
-            self.best_score = val_score
+        if val_brownlow_score > self.best_score: 
+            self.best_score = val_brownlow_score
             self.best_clf = clf
             self.best_combo = combo
             
@@ -1078,7 +1078,7 @@ class YangZhouB:
 
         # update internal governing DataFrames
         self.checked[combo] = 1
-        self.result[combo] = val_score
+        self.result[combo] = val_brownlow_score
 
         self._up_to += 1
 
@@ -1124,7 +1124,7 @@ class YangZhouB:
             print('Max Test Score: \n', self.tuning_result.iloc[max_val_id]['Test accu'])
             
         elif self.clf_type == 'Regression':
-            max_val_id = self.tuning_result['Val r2'].idxmax()
+            max_val_id = self.tuning_result['Val Brownlow Metric'].idxmax()
             print('Max Test Score: \n', self.tuning_result.iloc[max_val_id]['Test r2'])
 
         print('Max Combo Index: \n', self.best_combo, 'out of', self.n_items, '(note best combo is 0-indexed)')
@@ -1182,7 +1182,7 @@ class YangZhouB:
                 self.checked[combo] = 1
                 
                 if self.clf_type == 'Regression':
-                    self.result[combo] = row[1]['Val r2']
+                    self.result[combo] = row[1]['Val Brownlow Metric']
                 elif self.clf_type == 'Classification':
                     self.result[combo] = row[1]['Val accu']
 
