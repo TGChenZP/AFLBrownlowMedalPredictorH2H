@@ -1269,8 +1269,8 @@ class GuangAn:
         self._is_new_best = 0
 
         # update best score stats
-        if val_score > self.best_score: 
-            self.best_score = val_score
+        if val_brownlow_score > self.best_score: 
+            self.best_score = val_brownlow_score
             self.best_clf = clf
             self.best_combo = combo
             
@@ -1280,9 +1280,9 @@ class GuangAn:
             self._is_new_best = 1
 
         # add a new self variable compared to previous JiaXing classes
-        self.val_score = val_score
+        self.val_score = val_brownlow_score
 
-        print(f'''Trained and Tested combination {self._up_to}: {combo}, taking {np.round(time_used, 2)} seconds to get val score of {np.round(val_score, 4)}
+        print(f'''Trained and Tested combination {self._up_to}: {combo}, taking {np.round(time_used, 2)} seconds to get val score of {np.round(val_brownlow_score, 4)}
         Current best combo: {self.best_combo} with val score {np.round(self.best_score, 4)}''')
 
 
@@ -1319,7 +1319,7 @@ class GuangAn:
             print('Max Test Score: \n', self.tuning_result.iloc[max_val_id]['Test accu'])
             
         elif self.clf_type == 'Regression':
-            max_val_id = self.tuning_result['Val r2'].idxmax()
+            max_val_id = self.tuning_result['Val Brownlow Metric'].idxmax()
             print('Max Test Score: \n', self.tuning_result.iloc[max_val_id]['Test r2'])
 
         print('Max Combo Index: \n', self.best_combo)
