@@ -759,7 +759,7 @@ class JiaoCheng:
             
         elif self.clf_type == 'Regression':
             max_val_id = self.tuning_result['Val Brownlow Metric'].idxmax()
-            print('Max Test Score: \n', self.tung_result.iloc[max_val_id]['Test r2'])
+            print('Max Test Score: \n', self.tung_result.iloc[max_val_id]['Test Brownlow Metric'])
 
         print('Max Combo Index: \n', self.best_combo, 'out of', self.n_items, '(note best combo is 0-indexed)')
 
