@@ -23,6 +23,9 @@ csv_list.sort()
 csv_list = os.listdir(f'../future data/curated/{manip_type}')
 csv_list.sort()
 
+tuning_df = pd.read_csv('../models/tuning/' +'guanganb_BrownlowH2H_RFR.csv')
+col = eval(tuning_df.loc[tuning_df['Val Brownlow Metric'].argmax()]['features'])
+
 def predict_brownlow(csv_list):
     json_dict = dict()
 
@@ -45,7 +48,7 @@ def predict_brownlow(csv_list):
 
             player1 = data['Player1']
             player2 = data['Player2']
-            pred = model.predict(data[model3_COLS])
+            pred = model.predict(data[col])
             pred = pd.DataFrame({'player1': player1, 'player2': player2, 'pred': pred})
 
             # initialise tallies

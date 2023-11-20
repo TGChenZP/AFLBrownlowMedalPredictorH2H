@@ -66,7 +66,7 @@ def scrape(url):
     
     
     # Get advanced player statistics
-    time.sleep(random.uniform(0.5, 1))    # First sleep for a random amount of time - trying to hide crawler activity
+    time.sleep(random.uniform(0.1, 0.5))    # First sleep for a random amount of time - trying to hide crawler activity
     
     urlAdv = url + '&advv=Y' # Because advanced statistic's URL is only different from orig URL by this string
     pageAdv = requests.get(urlAdv)
@@ -424,7 +424,7 @@ for year in years:
             gameurl.append(urljoin(base_url, section['href']))
     urllist.append(gameurl)
     
-    time.sleep(random.uniform(0.5, 1))
+    time.sleep(random.uniform(0.1, 0.5))
 
 if not os.path.exists(f'../future data/raw'):
     os.makedirs(f'../future data/raw')
@@ -443,7 +443,7 @@ for year in urllist:
             out = combine(test1, test2)
             save(out, metadata, 'O')
         
-        time.sleep(random.uniform(0.5, 1))
+        time.sleep(random.uniform(0.1, 0.5))
 
 
 
@@ -542,7 +542,7 @@ def get_year_all_votes(year):
 
         year_all_votes[round] = round_dict
 
-        time.sleep(random.uniform(0.5, 1))
+        time.sleep(random.uniform(0.1, 0.5))
 
 
     return year_all_votes
