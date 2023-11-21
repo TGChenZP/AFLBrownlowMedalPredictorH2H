@@ -1,6 +1,6 @@
 # BrownlowPredictor (Head2Head using AFLCA votes)
 - Author: Lang (Ron) Chen
-- Date: Feb 2023 - Nov 2023
+- Date: Jun 2023 - Nov 2023
 
 
 **Presentables**
