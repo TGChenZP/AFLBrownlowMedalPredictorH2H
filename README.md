@@ -1,6 +1,6 @@
-# BrownlowPredictor (2023 Version)
+# BrownlowPredictor (Head2Head using AFLCA votes)
 - Author: Lang (Ron) Chen
-- Date: Dec 2022 - Feb 2023
+- Date: Feb 2023 - Nov 2023
 
 
 **Presentables**
@@ -15,79 +15,61 @@ This project attempts to predict the Brownlow Medal winner (AFL's highest indivi
 It predicts following the structure of the actual brownlow medal (i.e. voting game by game)
 
 **Method**
-1. Data was crawled and scraped from the afltables, and validated by footywire data; data were then stored by game
+1. Data was crawled and scraped from the afltables, and validated by footywire data; data were then stored by game; AFLCA data were also scraped from the AFLCA website
 2. Additional features were generated
-3. Features were normalised (x-mean)/sd within each game
-4. Brownlow votes were turned into three labels using one hot encoding (i.e. 1 vote model: player with 1 vote has label 1, every other player 0; 2 vote model: player with 2 votes has label 2, every other player 0 etc); thus three final models were required
-5. For each model, features that had abs(correlation with label) higher than 0.1 were selected
-6. Many regression models were attempted (tuned to best validation score hyperparameter combination)
+3. Head to Head statistics for each pair of players onfield were created (i.e. each feature became player 1's features subtract player 2's features).
+4. Features were normalised (x-mean)/sd within each game
+5. Many regression models were attempted (tuned to best validation score hyperparameter combination), where each model predicted the difference in Brownlow votes received by each instance (pair of players) (i.e. 3, 2, 1, 0, -1, -2, -3)
 
--  *models attempted includes: Linear Regression (with regularisation), Binomial Regression, K-Nearest Neighbour Regressor, Random Forest Regressor, AdaBoost Regressor, GradientBoost Regressor, XGB Regressor, LightGBM Regressor, CatBoost Regressor, Explainable Boosting Machine Regressor, Fully Connected Neural Network Regressor* 
+-  *models attempted includes: Linear Regression (with regularisation), Binomial Regression, K-Nearest Neighbour Regressor, Random Forest Regressor, Extra Random Forest Regressor, AdaBoost Regressor, GradientBoost Regressor, XGB Regressor, LightGBM Regressor, CatBoost Regressor, Explainable Boosting Machine Regressor, Fully Connected Neural Network Regressor* 
 
 Prediction
 
-7. Each game was put through the three models to get predicted outputs. 
-- the player with highest predicted score for 3-votes model gets 3 predicted votes
-- the player with highest predicted score for 2-votes model gets 2 predicted votes, unless they have already received 3 votes in which case the second ranked player for this model gets 2 votes
-- the player with highest predicted score for 1-votes model gets 1 predicted votes, unless they have already received 3 votes or 2 votes in which case the second ranked player for this model gets 1 vote. If the second ranked player also has received a higher vote then the third ranked player receives 1 vote
-8. Each game's votes are tallied up and the player with the highest vote for the season is the predicted Brownlow Winner
+6. Each game was put through the model to get predicted differences in Brownlow votes.
+- within each pair, if the predicted difference in Brownlow votes is positive, then 1 point is given to 'player 1' in this pair and -1 points given to 'player 2'; otherwise, 1 point is given to 'player 2' and -1 point is given to player 1.
+- The highest points-getter within a game gets 3 votes, the second gets 2 votes, the third gets 1 vote etc.
+7. Each game's votes are tallied up and the player with the highest vote for the season is the predicted Brownlow Winner
 <br>
 
-**Tuning Results (Validation dataset r<sup>2</sup> score)**
-| Model | 1 val  | 1 test  | 
-|-------|--------|--------|
-| RFR   | 0.5488 | 0.5051 |
-| GBR   |  |  |
-| XGB   |  |  |
-| LGB   | 0.5454 | 0.5093 |
-| CBR   |  |  |
-| EBR   | 0.5273 | 0.4830 |
-| NN    | **0.5687** | 0.5208 |
-| EXTRFR| 0.5485 | 0.5160 |
-| EBinR | 0.5516 | 0.5085 |
-| BinR  | 0.5517 | 0.5103 |
-| HBR   | 0.5246 | 0.4928 |
-| DNN_c | 0.5672 | **0.5224** |
+**Tuning Results (Validation dataset Brownlow score)**
+| Model | 1 val  | 
+|-------|--------|
+| RFR   | 0.6478 | 
+| GBR   | 0.6184 |  
+| XGB   | 0.6195 |  
+| LGB   | 0.6258 | 
+| CBR   | 0.6216 |  
+| EBR   | 0.6184 |
+| DNN   | 0.6279
+| DNN_c | 0.6195 | 
+| EXTRFR| 0.6363 | 
+| HGBR  | 0.5943 | 
+| DNN   | 0.6279 |
+| GLR   | 0.5902 |
+| ELR   | 0.6111
 
-| Model | 2 val  | 2 test  | 
-|-------|--------|--------|
-| RFR   | 0.1104 | 0.0536 |
-| ADA   | 0.0991 | 0.0613 |
-| GBR   |  |  |
-| XGB   | 0.1126 | 0.0601 |
-| LGB   | 0.5454 |  |
-| CBR   |  |  |
-| EBR   | 0.1040 | **0.0816** |
-| NN    | 0.1160 | 0.0663 |
-| EXTRFR| **0.1267** | 0.0782 |
-| HBR   | 0.1042 | 0.0778 |
-| DNN_c | 0.1190 | 0.0718 |
+* for the Brownlow Score, the model gets points for each game in this way:
 
-| Model | 3 val  | 3 test  | 
-|-------|--------|--------|
-| RFR   | 0.1642 | 0.1470 |
-| ADA   | 0.1493 | 0.1490 |
-| GBR   |  |  |
-| XGB   | 0.1537 | 0.1208 |
-| LGB   | **0.1778** | 0.1529 |
-| CBR   |  |  |
-| EBR   | 0.1692 | 0.1556 |
-| NN    | 0.1773 | 0.1678 |
-| EXTRFR| 0.1267 | 0.1571 |
-| HBR   | 0.1725 | 0.1504 |
-| DNN_c | 0.1765 | **0.1720** |
+| Ground Truth | Predicted | Points Won |
+| 3 | 3 | 3 |
+| 3 | 2 | 2 |
+| 3 | 1 | 1 |
+| 2 | 3 | 1 |
+| 2 | 2 | 2 |
+| 2 | 1 | 1 |
+| 1 | 3 | 1/3 |
+| 1 | 2 | 2/3 |
+| 1 | 1 | 1 |
 
+before being divided by 6 (the largest possible score for each game) and then averaged across the number of games
 
-However, due to inability to replicate NN results, the ultimate models used were
-- 1 vote: LightGB
-- 2 votes: LightGB
-- 3 votes: GradientBoost
+The scheme used to select the best model was the model with the highest test score, out of all the best-validation score model-hyperparameter combination for each model. The ultimate chosen model was the Random Forest Regressor.
 
 **Results**
 
-For held out 2022 data, predicted Clayton Oliver with 35 votes and actual winner Patrick Cripps on 28 votes (2nd). 
+For held out 2022 data, predicted Touk Miller with 33 votes to be the Brownlow Winner and Ground Truth winner Patrick Cripps on 29 votes (3rd). 
 
-Emperically, model tends to have each year's actual winner within its top 3
+Empirically, the model tends to have each year's actual winner within its top 3
 
 
 **Bibliography**
