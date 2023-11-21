@@ -51,6 +51,7 @@ Prediction
 * for the Brownlow Score, the model gets points for each game in this way:
 
 | Ground Truth | Predicted | Points Won |
+|-------|--------| --------- |
 | 3 | 3 | 3 |
 | 3 | 2 | 2 |
 | 3 | 1 | 1 |
