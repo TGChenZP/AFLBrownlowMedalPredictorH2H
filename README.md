@@ -1,4 +1,4 @@
-# BrownlowPredictor (Head2Head using AFLCA votes)
+# Model for Predicting Brownlow Medal Winner (Head2Head using AFLCA votes)
 - Author: Lang (Ron) Chen
 - Date: Jun 2023 - Nov 2023
 
