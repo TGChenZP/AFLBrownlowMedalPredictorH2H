@@ -1,6 +1,33 @@
-import os
-import json
 import pandas as pd
+import os
+import sys
+import json
+
+choice = 'OriginalData'
+
+# Grabs a list of the files
+filelist = os.listdir(f'../future data/raw/{choice}')
+filelist = [file for file in filelist if file[:4] == str(sys.argv[1])]
+# Remove the first file (an ipynb checkpoint file)
+filelist.sort()
+
+if not os.path.exists(f'../future data/curated/OriginalData_AddDerived'):
+    os.makedirs(f'../future data/curated/OriginalData_AddDerived')
+
+
+for file in filelist:
+    df = pd.read_csv(f'../future data/raw/{choice}/{file}')
+    
+    df['Uncontested Marks'] = df['Marks'].sub(df['Contested Marks'])
+    df['Marks Outside 50'] = df['Marks'].sub(df['Marks Inside 50'])
+    df['Tackles Outside 50'] = df['Tackles'].sub(df['Tackles Inside 50'])
+    df['Behind Assists'] = df['Score Involvements'].sub(df['Goal Assists'])
+    df['Effective Disposals'] = df['Disposals'].mul(df['Disposal Efficiency %']*0.01).round(0)
+    df['Ineffective Disposals'] = df['Disposals'].sub(df['Effective Disposals'])
+    
+    df = df.drop('Disposal Efficiency %', axis = 1)
+    
+    df.to_csv(f'../future data/curated/OriginalData_AddDerived/{file}', index = False)
 
 
 
@@ -55,13 +82,6 @@ print(errors)
 
 
 
-import numpy as np
-from sklearn.model_selection import train_test_split
-
-
-
-
-
 filelist = os.listdir(f'../future data/curated/AFLCAVotes')
 filelist.sort()
 filelist = [file for file in filelist if file[0] != '.' ]
@@ -80,22 +100,12 @@ compare = ['Winloss','HomeAway', 'AFLCA_votes', 'Kicks', 'Handballs', 'Disposals
                'Clearances', 'Rebound 50s', 'Frees For', 'Contested Possessions', 'Uncontested Possessions', 
                'Effective Disposals', 'Contested Marks', 'Marks Inside 50', 'One Percenters', 'Bounces', 'Centre Clearances', 
                'Stoppage Clearances', 'Score Involvements', 'Metres Gained', 'Intercepts', 'Tackles Inside 50', 'Time On Ground %', 'Uncontested Marks',
-               'Marks Outside 50', 'Tackles Outside 50', 'Behind Assists', 'Effective Disposals', 'Ineffective Disposals', 'Brownlow Votes', 'Clangers', 'Turnovers', 'Frees Agains']
-
-
-
-
-
-if not os.path.exists(f'../future data/curated/Head2Head'):
-    os.makedirs(f'../future data/curated/Head2Head')
-
-
-
+               'Marks Outside 50', 'Tackles Outside 50', 'Behind Assists', 'Effective Disposals', 'Ineffective Disposals', 'Clangers', 'Turnovers', 'Frees Agains']
 
 
 for file in filelist:
 
-    if file in os.listdir(f'../future data/curated/Head2Head'):
+    if f"{file.strip('.csv')}.parquet" in os.listdir(f'../future data/curated/Head2Head'):
         continue
 
     df = pd.read_csv(f'../future data/curated/AFLCAVotes/{file}')

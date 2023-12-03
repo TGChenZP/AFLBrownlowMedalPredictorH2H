@@ -192,7 +192,7 @@ def scrape(url):
     elif team2 == 'Bulldogs':
         team2 = 'WesternBulldogs'
 
-    if f'../future data/NormalisedData/{Year} Round {Round} {team1} v {team2} (N).csv' in PROCESSED_FILELIST:
+    if f'../future data/Head2Head/{Year} Round {Round} {team1} v {team2} (N).csv' in PROCESSED_FILELIST:
         return False, False, False
     
     # Add Brownlow Data into our dataframe as a column
@@ -413,6 +413,12 @@ years = range(int(sys.argv[1]), int(sys.argv[1])+1)
 
 urllist = list()
 
+if not os.path.exists(f'../future data/raw'):
+    os.makedirs(f'../future data/raw')
+
+if not os.path.exists(f'../future data/curated/Head2Head'):
+    os.makedirs(f'../future data/curated/Head2Head')
+
 for year in years:
     u = f'https://www.footywire.com/afl/footy/ft_match_list?year={year}'
     page = requests.get(u)
@@ -426,11 +432,10 @@ for year in years:
     
     time.sleep(random.uniform(0.1, 0.5))
 
-if not os.path.exists(f'../future data/raw'):
-    os.makedirs(f'../future data/raw')
+
 
 try:
-    PROCESSED_FILELIST = os.listdir(f'../future data/curated/NormalisedData')
+    PROCESSED_FILELIST = os.listdir(f'../future data/curated/Head2Head')
 except:
     PROCESSED_FILELIST = []
 
@@ -527,7 +532,7 @@ def get_game_vote_dict_list(soup):
 def get_year_all_votes(year):
     year_all_votes = dict()
 
-    for round in range(1, 24):
+    for round in range(1, 25):
         if year == datetime.date.today().year: # update just for 2023 - site link changed
             url = f'https://aflcoaches.com.au/awards/the-aflca-champion-player-of-the-year-award/leaderboard/{year}/{year+1}01{str(round).zfill(2)}'
         else:

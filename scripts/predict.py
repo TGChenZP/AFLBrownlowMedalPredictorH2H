@@ -10,15 +10,10 @@ import sys
 with open(f'../models/final_models/model.pickle', 'rb') as f:
     model = pickle.load(f)
 
-    
-# TODO: add in columns
 
 
 
 manip_type = 'Head2Head'
-
-csv_list = os.listdir(f'../data/curated/{manip_type}')
-csv_list.sort()
 
 csv_list = os.listdir(f'../future data/curated/{manip_type}')
 csv_list.sort()
@@ -33,7 +28,7 @@ def predict_brownlow(csv_list):
 
     data = pd.DataFrame()
     for file in csv_list:
-        if file[-4:] != '.csv':
+        if file[-8:] != '.parquet':
             continue
 
         game_dict = dict()
@@ -44,10 +39,10 @@ def predict_brownlow(csv_list):
             team2 = file.split()[5]
             game = team1 + ' v ' + team2
 
-            data = pd.read_csv(f'../data/curated/{manip_type}/{file}')
+            data = pd.read_parquet(f'../future data/curated/{manip_type}/{file}')
 
-            player1 = data['Player1']
-            player2 = data['Player2']
+            player1 = data['player1']
+            player2 = data['player2']
             pred = model.predict(data[col])
             pred = pd.DataFrame({'player1': player1, 'player2': player2, 'pred': pred})
 
@@ -56,11 +51,11 @@ def predict_brownlow(csv_list):
             
 
             for row in pred.iterrows(): # then get predicted votes
-                if row[1]['Predicted Brownlow Votes'] > 0:
+                if row[1]['pred'] > 0:
                     pred_leaderboard[row[1]['player1']] += 1
                     pred_leaderboard[row[1]['player2']] -= 1
 
-                elif row[1]['Predicted Brownlow Votes'] < 0:
+                elif row[1]['pred'] < 0:
                     pred_leaderboard[row[1]['player1']] -= 1
                     pred_leaderboard[row[1]['player2']] += 1
             
