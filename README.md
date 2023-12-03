@@ -1,6 +1,6 @@
 # Model for Predicting Brownlow Medal Winner (Head2Head using AFLCA votes)
 - Author: Lang (Ron) Chen
-- Date: Jun 2023 - Nov 2023
+- Date: Jun 2023 - Dec 2023
 
 
 **Presentables**
@@ -21,7 +21,7 @@ It predicts following the structure of the actual brownlow medal (i.e. voting ga
 4. Features were normalised (x-mean)/sd within each game
 5. Many regression models were attempted (tuned to best validation score hyperparameter combination), where each model predicted the difference in Brownlow votes received by each instance (pair of players) (i.e. 3, 2, 1, 0, -1, -2, -3)
 
--  *models attempted includes: Linear Regression (with regularisation), Binomial Regression, K-Nearest Neighbour Regressor, Random Forest Regressor, Extra Random Forest Regressor, AdaBoost Regressor, GradientBoost Regressor, XGB Regressor, LightGBM Regressor, CatBoost Regressor, Explainable Boosting Machine Regressor, Fully Connected Neural Network Regressor* 
+-  *models attempted includes: Linear Regression (with regularisation), Binomial Regression, K-Nearest Neighbour Regressor, Random Forest Regressor, Extra Random Forest Regressor, AdaBoost Regressor, GradientBoost Regressor, XGB Regressor, LightGBM Regressor, CatBoost Regressor, Explainable Boosting Machine Regressor, Fully Connected Neural Network Regressor*
 
 Prediction
 
@@ -30,6 +30,8 @@ Prediction
 - The highest points-getter within a game gets 3 votes, the second gets 2 votes, the third gets 1 vote etc.
 7. Each game's votes are tallied up and the player with the highest vote for the season is the predicted Brownlow Winner
 <br>
+
+Note: it is likely that one will question why the training labels span all integers from -3 to 3, but in prediction the 'voting system' only give +1 or -1 to two players in a head2head pair. This is because it is desired to give the training data more nuance and details (i.e. stronger signals for +3 and -3 compared to +1 and -1 pairs), and then trust that models trained off this training signal can predict the "Ground Truth Higher vote-getter" to always get a positive regression score. Alternatively one can try to train with just +1, 0 and -1 as regression values, but giving more votes to a prediction is not recommended because it will make the final voting system less robust. 
 
 **Tuning Results (Validation dataset Brownlow score)**
 | Model | 1 val  | 
