@@ -40,7 +40,7 @@ def predict_brownlow(csv_list):
             game = team1 + ' v ' + team2
 
             data = pd.read_parquet(f'../future data/curated/{manip_type}/{file}')
-
+            print(file)
             player1 = data['player1']
             player2 = data['player2']
             pred = model.predict(data[col])
