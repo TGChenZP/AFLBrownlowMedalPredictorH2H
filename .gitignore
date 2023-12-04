@@ -14,5 +14,5 @@ data/curated/OriginalData_AddDerived/
 data/curated/AFLCAVotes/
 data/curated/Head2Head/
 data/curated/modelling/
-*.pickle
 .vscode/extensions.json
+models/tuning
