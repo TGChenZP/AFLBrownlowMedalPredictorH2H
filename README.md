@@ -75,6 +75,12 @@ For held out 2022 data, predicted Touk Miller with 33 votes to be the Brownlow W
 Empirically, the model tends to have each year's actual winner within its top 3
 
 
+**Feature importance**
+
+![Local Image](plots/model_importance.png)
+
+
+
 **Bibliography**
 
 Data Source
