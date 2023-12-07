@@ -80,7 +80,10 @@ Empirically, the model tends to have each year's actual winner within its top 3
 
 ![Local Image](plots/model_importance.png)
 
-
+**Future Directions of Work**
+1. Can attempt to use classification models instead of regression models (potentially down to a 2 class problem)
+   
+2. Try to rebalance the classes (upsample/downsample); in both original and cumulative models.
 
 **Bibliography**
 
