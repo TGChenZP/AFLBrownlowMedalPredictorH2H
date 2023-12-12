@@ -4,7 +4,7 @@
 
 
 **Presentables**
-- The model pickle exceeded the GitHub limit - please download at https://drive.google.com/file/d/125nc5Z6fDBJ7NczbsLNAYxmNiTWxuEvb/view?usp=drive_link and place in the `./models/final_models/` directory
+- The model pickle exceeded the GitHub limit - please download at [this link](https://drive.google.com/file/d/125nc5Z6fDBJ7NczbsLNAYxmNiTWxuEvb/view?usp=drive_link) and place in the `./models/final_models/` directory
 - Flask web application at `./app/Programme.py`
 - To run web application, please open terminal at `./app` and input `export FLASK_APP='Programme.py'` and `flask run` before heading to the link as described printed in the terminal
 - First click **scrape data** (may take a moment), followed by **predict**
